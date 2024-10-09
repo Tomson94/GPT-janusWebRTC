@@ -115,21 +115,22 @@ public class JanusWebSocketClient extends WebSocketListener {
     }
 
     private void sendJoinRoomAsPublisher() throws JSONException {
-        /*JSONObject body = new JSONObject();
+        JSONObject body = new JSONObject();
         body.put("request", "join");
         body.put("ptype", "publisher");
         body.put("room", Constants.ROOM_ID);
+        body.put("id", Constants.ROOM_ID);
         body.put("display", "AndroidUser");
 
         JSONObject message = new JSONObject();
         message.put("janus", "message");
         message.put("body", body);
-        message.put("transaction", *//*generateTransactionId()*//*"JoinRoom");
+        message.put("transaction", /*generateTransactionId()*/"JoinRoom");
         message.put("session_id", sessionId);
         message.put("handle_id", handleId);
         message.put("apisecret", Constants.SECRET);
-        send(message.toString());*/
-        sendJoinRoomAsSubcriber();
+        send(message.toString());
+        /*sendJoinRoomAsSubcriber();*/
     }
     private void sendJoinRoomAsSubcriber() throws JSONException {
         JSONObject subscribeRequest = new JSONObject();

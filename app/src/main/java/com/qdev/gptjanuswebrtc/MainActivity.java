@@ -29,10 +29,7 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RTCStats;
-import org.webrtc.RTCStatsCollectorCallback;
-import org.webrtc.RTCStatsReport;
 import org.webrtc.RendererCommon;
-import org.webrtc.RtpParameters;
 import org.webrtc.RtpSender;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceTextureHelper;
@@ -42,9 +39,8 @@ import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 ;
 
@@ -93,6 +89,18 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (localRenderer != null) {
+            localRenderer.release();
+        }
+        if (remoteRenderer != null) {
+            remoteRenderer.release();
+        }
+
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
@@ -120,8 +128,9 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
         localRenderer.init(eglBase.getEglBaseContext(), null);
         remoteRenderer.init(eglBase.getEglBaseContext(), null);
         localRenderer.setMirror(true);
+        localRenderer.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
         remoteRenderer.setMirror(false);
-        remoteRenderer.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
+        remoteRenderer.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
         remoteRenderer.setZOrderMediaOverlay(true);
     }
 
@@ -176,19 +185,19 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
         MediaStream mediaStream = peerConnectionFactory.createLocalMediaStream("localStream");
 
         // Add Tracks
-       /* if (localVideoTrack != null) {
+        if (localVideoTrack != null) {
             mediaStream.addTrack(localVideoTrack);
             peerConnection.addTrack(localVideoTrack);
         }
         if (localAudioTrack != null) {
             mediaStream.addTrack(localAudioTrack);
             peerConnection.addTrack(localAudioTrack);
-        }*/
+        }
 
         peerConnection.getStats(report -> {
             for (RTCStats stat : report.getStatsMap().values()) {
                 // Look for outbound-rtp (video) stats
-                Log.e(TAG, "initPeerConnection: "+stat.toString() );
+                Log.e(TAG, "initPeerConnection: " + stat.toString());
                 if ("outbound-rtp".equals(stat.getType())) {
                     if (stat.getMembers().containsKey("mediaType") && "video".equals(stat.getMembers().get("mediaType"))) {
                         long bytesSent = (long) stat.getMembers().get("bytesSent");
@@ -301,9 +310,11 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
 
     @Override
     public void onTrackReceived(VideoTrack remoteVideoTrack) {
-        Log.e(TAG, "onTrackReceived: "+remoteVideoTrack.id());
-        remoteVideoTrack.setEnabled(true);
-        remoteVideoTrack.addSink(remoteRenderer);
+        runOnUiThread(() -> {
+            Log.e(TAG, "onTrackReceived: " + remoteVideoTrack.id());
+            remoteVideoTrack.setEnabled(true);
+            remoteVideoTrack.addSink(remoteRenderer);
+        });
     }
 
     @Override
