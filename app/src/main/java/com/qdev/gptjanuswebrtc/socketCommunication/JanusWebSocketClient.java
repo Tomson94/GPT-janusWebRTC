@@ -378,7 +378,7 @@ public class JanusWebSocketClient extends WebSocketListener {
         try {
             JSONObject body = new JSONObject();
             body.put("request", "configure");
-            body.put("audio", true);
+            body.put("audio", false);
             body.put("video", true);
 
             JSONObject jsep = new JSONObject();

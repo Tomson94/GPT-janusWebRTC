@@ -196,8 +196,8 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
             peerConnection.addTrack(localVideoTrack);
         }
         if (localAudioTrack != null) {
-            mediaStream.addTrack(localAudioTrack);
-            peerConnection.addTrack(localAudioTrack);
+            //mediaStream.addTrack(localAudioTrack);
+            ///peerConnection.addTrack(localAudioTrack);
         }
 
         peerConnection.setBitrate(
