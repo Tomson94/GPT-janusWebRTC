@@ -101,6 +101,12 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
     }
 
     @Override
+    protected void onPause() {
+        janusClient.requestDestroyStream();
+        super.onPause();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
