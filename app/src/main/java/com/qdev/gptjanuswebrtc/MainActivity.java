@@ -39,7 +39,6 @@ import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 ;
@@ -194,6 +193,12 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
             peerConnection.addTrack(localAudioTrack);
         }
 
+        peerConnection.setBitrate(
+                1000 * 1000,   // 500 kbps
+                4000 * 1000, // 2.5 Mbps
+                6000 * 1000   // 4 Mbps
+        );
+
         peerConnection.getStats(report -> {
             for (RTCStats stat : report.getStatsMap().values()) {
                 // Look for outbound-rtp (video) stats
@@ -215,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
     private void initVideoCapturer() {
         videoCapturer = new VideoCaptureFactory()
                 .getVideoCapturer(this);
-
         initMediaStreams();
     }
 
@@ -223,9 +227,9 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
         // Video Source
         SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create(
                 "CaptureThread", eglBase.getEglBaseContext());
-        VideoSource videoSource = peerConnectionFactory.createVideoSource(false);
+        VideoSource videoSource = peerConnectionFactory.createVideoSource(true);
         videoCapturer.initialize(surfaceTextureHelper, this, videoSource.getCapturerObserver());
-        videoCapturer.startCapture(720, 1280, 30); // Width, height, FPS
+        videoCapturer.startCapture(720, 480, 30); // Width, height, FPS
 
         // Video Track
         localVideoTrack = peerConnectionFactory.createVideoTrack("100", videoSource);

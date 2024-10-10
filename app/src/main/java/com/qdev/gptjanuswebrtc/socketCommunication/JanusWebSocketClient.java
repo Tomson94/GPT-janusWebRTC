@@ -284,7 +284,7 @@ public class JanusWebSocketClient extends WebSocketListener {
         MediaConstraints constraints = new MediaConstraints();
         constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "false"));
         constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "false"));
-
+        
         peerConnectionRef.createOffer(new CustomSdpObserver("createOffer") {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
