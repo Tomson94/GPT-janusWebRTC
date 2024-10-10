@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
 
         // Configuration
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
         rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         // Create PeerConnection
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements JanusMessageHandl
         }
 
         peerConnection.setBitrate(
-                1000 * 1000,   // 500 kbps
+                500 * 1000,   // 500 kbps
                 4000 * 1000, // 2.5 Mbps
                 6000 * 1000   // 4 Mbps
         );
