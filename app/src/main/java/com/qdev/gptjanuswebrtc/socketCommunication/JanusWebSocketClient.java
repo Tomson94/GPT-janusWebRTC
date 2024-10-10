@@ -99,6 +99,7 @@ public class JanusWebSocketClient extends WebSocketListener {
     private void sendCreateSession() throws JSONException {
         JSONObject message = new JSONObject();
         message.put("janus", "create");
+        message.put("room", Constants.ROOM_ID);
         message.put("transaction", /*generateTransactionId()*/"Create");
         message.put("apisecret", Constants.SECRET);
         send(message.toString());
@@ -166,9 +167,9 @@ public class JanusWebSocketClient extends WebSocketListener {
         }*/
         JSONObject body = new JSONObject();
         body.put("request", "create");
-        body.put("ptype", "publisher");
+        //body.put("ptype", "publisher");
         body.put("room", Constants.ROOM_ID);
-        body.put("display", "AndroidUser");
+        //body.put("display", "AndroidUser");
 
         JSONObject message = new JSONObject();
         message.put("janus", "message");
@@ -647,4 +648,21 @@ public class JanusWebSocketClient extends WebSocketListener {
         peerConnectionRef.addIceCandidate(iceCandidate);
         Log.d("ICE Candidate", "Remote ICE candidate added.");
     }
+
+   public   void requestDestroyStream(){
+        /**
+         * {"transaction":"Destroy","janus":"destroy","session_id":7231210807641497,"apisecret":"YMDhSqL695vGDUELODmxWy3eA"}
+         * */
+        try {
+            JSONObject message = new JSONObject();
+            message.putOpt("transaction","Destroy");
+            message.putOpt("session_id", sessionId);
+            message.putOpt("apisecret", Constants.SECRET);
+            message.putOpt("janus", "destroy");
+            send(message.toString());
+        } catch (JSONException e){
+            Log.e(TAG, "requestKeepAlive: ", e);
+        }
+    }
+
 }
